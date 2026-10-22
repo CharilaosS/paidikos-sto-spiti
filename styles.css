@@ -114,3 +114,14 @@ footer{max-width:760px;margin:0 auto;padding:0 18px 30px;color:var(--muted);font
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid2 .card{margin-bottom:0}
 }
+
+.pin{
+  display:flex;gap:14px;align-items:center;max-width:724px;margin:6px auto 4px;
+  padding:12px;background:var(--accent-soft);border:2px solid var(--accent);
+  border-radius:var(--radius);color:var(--ink);text-decoration:none;
+}
+@media (min-width:761px){.pin{margin-left:auto;margin-right:auto}}
+@media (max-width:760px){.pin{margin-left:18px;margin-right:18px}}
+.pin img{width:118px;height:auto;border-radius:10px;flex:0 0 auto}
+.pin span{font-size:15px;line-height:1.4}
+.pin b{display:block;font-size:18px;color:var(--accent);margin-bottom:2px}
