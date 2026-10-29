@@ -1,0 +1,65 @@
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{
+  margin:0;height:100%;overflow:hidden;background:#8fd3f4;
+  overscroll-behavior:none;touch-action:none;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+}
+body{position:fixed;inset:0}
+[hidden]{display:none!important}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+
+/* Τρία τεράστια κουμπιά καιρού */
+.weather{
+  position:fixed;left:0;right:0;bottom:0;
+  display:flex;justify-content:center;gap:min(4vw,28px);
+  padding:0 12px calc(18px + env(safe-area-inset-bottom));
+}
+.weather button{
+  --s:min(29vw,150px);
+  width:var(--s);height:var(--s);border-radius:50%;
+  border:6px solid rgba(255,255,255,.95);
+  background:rgba(255,255,255,.55);
+  box-shadow:0 6px 18px rgba(30,50,80,.25);
+  display:grid;place-items:center;padding:0;cursor:pointer;
+  transition:transform .18s ease, background .3s, border-color .3s;
+  touch-action:none;
+}
+.weather button span{font-size:calc(var(--s) * .52);line-height:1;pointer-events:none}
+.weather button.on{background:#fff6c9;border-color:#ffd23f;transform:scale(1.07)}
+.weather button.press{transform:scale(.9)}
+.weather.off{opacity:0;pointer-events:none;transition:opacity 1.5s}
+
+/* Οθόνη έναρξης / τέλους */
+.cover{
+  position:fixed;inset:0;display:grid;place-items:center;
+  background:rgba(143,211,244,.35);transition:opacity .6s;
+}
+.cover.gone{opacity:0;pointer-events:none}
+.play{
+  width:min(52vw,240px);height:min(52vw,240px);border-radius:50%;
+  border:8px solid #fff;background:#ffb703;cursor:pointer;
+  box-shadow:0 10px 30px rgba(30,50,80,.3);position:relative;
+  animation:pulse 1.8s ease-in-out infinite;
+}
+.play::after{
+  content:"";position:absolute;left:38%;top:27%;
+  border-left:calc(min(52vw,240px) * .32) solid #fff;
+  border-top:calc(min(52vw,240px) * .2) solid transparent;
+  border-bottom:calc(min(52vw,240px) * .2) solid transparent;
+}
+@keyframes pulse{50%{transform:scale(1.06)}}
+
+.night{background:radial-gradient(circle at 50% 40%,#2c3e6b,#141c33);opacity:0;transition:opacity 4s}
+.night.show{opacity:1}
+.moon{font-size:min(40vw,200px);filter:drop-shadow(0 0 30px rgba(255,240,180,.6))}
+
+/* Έξοδος ενήλικα: μικρή, θαμπή, πάνω αριστερά */
+.exit{
+  position:fixed;top:calc(8px + env(safe-area-inset-top));left:8px;
+  width:52px;height:52px;padding:6px;border:0;background:none;opacity:.35;
+  touch-action:none;z-index:5;
+}
+.exit svg{width:100%;height:100%;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round}
+.exit .ring{stroke-dasharray:107;stroke-dashoffset:107;transform:rotate(-90deg);transform-origin:center}
+.exit.hold{opacity:1}
+.exit.hold .ring{stroke-dashoffset:0;transition:stroke-dashoffset 1.5s linear}

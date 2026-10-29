@@ -138,6 +138,16 @@ function themeCard(th, compact = false) {
   </section>`;
 }
 
+// Μικρά παιχνίδια στο games/ — ανοίγουν σε πλήρη οθόνη, κλείνουν μόνα τους μετά από ~5 λεπτά
+function gameCard() {
+  return `<a class="card game" href="games/kairos/">
+    <img src="games/kairos/img/icon-180.png" alt="">
+    <span><b>🎮 Παιχνίδι: Ο καιρός του Πέτρου</b>
+    Ήλιος, βροχή ή χιόνι — ο Πέτρος ντύνεται ανάλογα. Κλείνει μόνο του σε 5 λεπτά·
+    για έξοδο νωρίτερα, κρατήστε πατημένο το ✕ πάνω αριστερά.</span>
+  </a>`;
+}
+
 // --- views ---
 function viewToday() {
   const now = new Date();
@@ -152,6 +162,7 @@ function viewToday() {
     ${feastsOn(today).map(feastCard).join('')}
     ${church && !feastsOn(today).some(f => f.church) ? `<section class="card feast"><h3>⛪ Κυριακή — πάμε εκκλησία</h3><p class="small">Η πρωινή δραστηριότητα γίνεται ήπια, μετά την εκκλησία.</p></section>` : ''}
     ${themeCard(th, true)}
+    ${gameCard()}
     <h2>Οι δραστηριότητες σήμερα</h2>
     ${wkend ? '<p class="small muted">Σαββατοκύριακο — αν είμαστε στο χωριό, ό,τι γίνεται έξω πάει στην αυλή.</p>' : ''}
     ${acts.length ? acts.map((a,i) => actCard(a, labels[i])).join('')

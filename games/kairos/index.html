@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#8fd3f4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Καιρός">
+<title>Ο καιρός του Πέτρου</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="stylesheet" href="kairos.css">
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+
+<!-- Τα τρία κουμπιά του παιδιού: μόνο εικονίδια, κανένα κείμενο -->
+<nav class="weather" id="weather" aria-label="Καιρός">
+  <button data-w="sun"  aria-label="Ήλιος"><span>☀️</span></button>
+  <button data-w="rain" aria-label="Βροχή"><span>🌧️</span></button>
+  <button data-w="snow" aria-label="Χιόνι"><span>❄️</span></button>
+</nav>
+
+<!-- Αρχή: ένα μεγάλο «παίξε» (χρειάζεται κι ένα άγγιγμα για να ξεκινήσει ο ήχος στο iPhone) -->
+<div class="cover" id="start">
+  <button class="play" id="play" aria-label="Παίξε"></button>
+</div>
+
+<!-- Ήρεμο τέλος μετά από ~5 λεπτά -->
+<div class="cover night" id="end" hidden>
+  <div class="moon">🌙</div>
+</div>
+
+<!-- Έξοδος για τον ενήλικα: κράτα πατημένο ~1,5″ -->
+<button class="exit" id="exit" aria-label="Έξοδος (κράτα πατημένο)">
+  <svg viewBox="0 0 40 40"><circle class="ring" cx="20" cy="20" r="17"/><path d="M14 14l12 12M26 14L14 26"/></svg>
+</button>
+
+<script type="module" src="game.js"></script>
+</body>
+</html>

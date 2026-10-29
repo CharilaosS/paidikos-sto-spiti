@@ -125,3 +125,8 @@ footer{max-width:760px;margin:0 auto;padding:0 18px 30px;color:var(--muted);font
 .pin img{width:118px;height:auto;border-radius:10px;flex:0 0 auto}
 .pin span{font-size:15px;line-height:1.4}
 .pin b{display:block;font-size:18px;color:var(--accent);margin-bottom:2px}
+.game{display:flex;gap:14px;align-items:center;text-decoration:none;color:var(--ink);
+  background:linear-gradient(180deg,#e3f3fb,var(--card));border-color:#b9dff0}
+.game img{width:64px;height:64px;border-radius:14px;flex:0 0 auto}
+.game span{font-size:14px;line-height:1.4;color:var(--muted)}
+.game b{display:block;font-size:17px;color:#2f6fa8;margin-bottom:2px}
