@@ -1,1 +1,11 @@
 .DS_Store
+
+# Μυστικά — ΠΟΤΕ στο repo (το OpenAI key ζει στο macOS Keychain)
+.env
+.env*
+*.key
+*.pem
+secrets*
+
+# Πρόχειρες εικόνες πριν την έγκριση
+_drafts/
