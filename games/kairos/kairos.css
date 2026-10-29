@@ -63,3 +63,11 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .exit .ring{stroke-dasharray:107;stroke-dashoffset:107;transform:rotate(-90deg);transform-origin:center}
 .exit.hold{opacity:1}
 .exit.hold .ring{stroke-dashoffset:0;transition:stroke-dashoffset 1.5s linear}
+
+/* κύκλος στο σημείο που άγγιξε το παιδί */
+.ripple{
+  position:fixed;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;
+  border:5px solid rgba(255,255,255,.9);pointer-events:none;
+  animation:ripple .65s ease-out forwards;
+}
+@keyframes ripple{from{transform:scale(.2);opacity:1}to{transform:scale(1.4);opacity:0}}

@@ -23,8 +23,10 @@ const lam = c => new THREE.MeshLambertMaterial({ color: c });
 const basic = (c, o = {}) => new THREE.MeshBasicMaterial({ color: c, ...o });
 const mesh = (geo, mat, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); scene.add(m); return m; };
 
+// Μέγεθος από τον ίδιο τον καμβά (όχι innerWidth/innerHeight): στο iPhone η μπάρα του Safari
+// αλλάζει το ορατό ύψος και τα δύο δεν συμπίπτουν πάντα.
 function resize() {
-  const w = innerWidth, h = innerHeight;
+  const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   // Στο κινητό (όρθιο) θέλουμε να χωράει ~4 μονάδες πλάτος εκεί που στέκεται ο Πέτρος.
@@ -35,6 +37,7 @@ function resize() {
   camera.lookAt(LOOK);
 }
 addEventListener('resize', resize);
+window.visualViewport?.addEventListener('resize', resize);
 resize();
 
 // ---------- φως ----------
@@ -216,8 +219,28 @@ function setWeather(w) {
 
 // ---------- αγγίγματα ----------
 const snd = new Sound();
-const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
 let playing = false, ended = false;
+
+// Ορθογώνιο ενός ήρωα στην οθόνη (σε CSS px), φαρδύτερο κατά pad — τα μικρά δάχτυλα δεν σημαδεύουν ακριβώς.
+const box = new THREE.Box3(), corner = new THREE.Vector3();
+function onScreen(obj, x, y, pad) {
+  box.setFromObject(obj);
+  const r = canvas.getBoundingClientRect();
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (let i = 0; i < 8; i++) {
+    corner.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(camera);
+    const sx = r.left + (corner.x + 1) / 2 * r.width, sy = r.top + (1 - corner.y) / 2 * r.height;
+    x0 = Math.min(x0, sx); x1 = Math.max(x1, sx); y0 = Math.min(y0, sy); y1 = Math.max(y1, sy);
+  }
+  return x > x0 - pad && x < x1 + pad && y > y0 - pad && y < y1 + pad;
+}
+
+// Ένας κύκλος που απλώνει εκεί που άγγιξε το παιδί — κάθε άγγιγμα «απαντά»
+function ripple(x, y) {
+  const d = document.createElement('div');
+  d.className = 'ripple'; d.style.left = x + 'px'; d.style.top = y + 'px';
+  document.body.appendChild(d); setTimeout(() => d.remove(), 700);
+}
 
 document.getElementById('weather').addEventListener('pointerdown', e => {
   const b = e.target.closest('button'); if (!b || !playing) return;
@@ -226,21 +249,23 @@ document.getElementById('weather').addEventListener('pointerdown', e => {
   setWeather(b.dataset.w);
 });
 
-canvas.addEventListener('pointerdown', e => {
-  if (!playing) return;
+// Ακούμε σε όλο το έγγραφο (όχι μόνο στον καμβά), ώστε κανένα αόρατο στρώμα να μην «τρώει» το άγγιγμα.
+document.addEventListener('pointerdown', e => {
+  if (!playing || e.target.closest('button')) return;
   snd.resume();
-  ptr.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
-  ray.setFromCamera(ptr, camera);
-  if (ray.intersectObject(petrosRig, true).length) hopPetros();
-  else if (ray.intersectObject(dogRig, true).length) hopDog();
-  else if (weather === 'snow') snd.tinkle(0.12);
-  else if (weather === 'sun') snd.birdSong();
-  else snd.drip();
+  const x = e.clientX, y = e.clientY;
+  ripple(x, y);
+  if (onScreen(petros.group, x, y, 24)) hopPetros();
+  else if (onScreen(dog.group, x, y, 24)) hopDog();
+  else if (weather === 'snow') snd.tinkle(0.2);
+  else if (weather === 'sun') snd.birdSong(0.14);
+  else snd.drip(0.16);
 });
 
 document.getElementById('play').addEventListener('click', () => {
   snd.start();
-  document.getElementById('start').classList.add('gone');
+  const start = document.getElementById('start');
+  start.classList.add('gone'); setTimeout(() => (start.hidden = true), 700);
   playing = true;
   setWeather('sun');
 });
@@ -342,6 +367,9 @@ renderer.setAnimationLoop(frame);
 
 // offline: κρατάμε τα αρχεία του παιχνιδιού στη συσκευή
 // (τοπικά μόνο με ?sw=1, για να μη μας σερβίρει παλιά αρχεία όσο δουλεύουμε)
+// Όταν έρθει νέα έκδοση, ξαναφορτώνουμε μόνο αν το παιδί δεν έχει αρχίσει ακόμη να παίζει.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || q.has('sw'))) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !playing && !ended) location.reload(); });
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }

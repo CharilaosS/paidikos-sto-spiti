@@ -77,21 +77,24 @@ export class Sound {
     o.connect(g).connect(this.master); o.start(start); o.stop(start + dur + 0.05);
   }
 
-  birdSong() {
+  birdSong(vol = 0.05) {
+    if (!this.ctx) return;
     const t = this.ctx.currentTime, base = 2600 + Math.random() * 1400, n = 2 + (Math.random() * 3 | 0);
     for (let i = 0; i < n; i++) {
       const s = t + i * 0.13;
-      this.tone(base, s, 0.09, { vol: 0.05, to: base * 1.35 });
-      this.tone(base * 1.3, s + 0.05, 0.06, { vol: 0.035, to: base * 0.95 });
+      this.tone(base, s, 0.09, { vol, to: base * 1.35 });
+      this.tone(base * 1.3, s + 0.05, 0.06, { vol: vol * 0.7, to: base * 0.95 });
     }
   }
 
-  drip() {
+  drip(vol = 0.025 + Math.random() * 0.03) {
+    if (!this.ctx) return;
     const t = this.ctx.currentTime, f = 900 + Math.random() * 1500;
-    this.tone(f, t, 0.07, { vol: 0.025 + Math.random() * 0.03, to: f * 0.45 });
+    this.tone(f, t, 0.07, { vol, to: f * 0.45 });
   }
 
   tinkle(vol = 0.08) {
+    if (!this.ctx) return;
     const t = this.ctx.currentTime, notes = [1568, 1760, 2093, 2349, 2637];
     const f = notes[Math.random() * notes.length | 0];
     this.tone(f, t, 1.2, { vol, attack: 0.005 });

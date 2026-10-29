@@ -1,7 +1,7 @@
 // Offline: την πρώτη φορά που ανοίγει το παιχνίδι κρατάμε όλα του τα αρχεία στη συσκευή.
 // Μετά σερβίρουμε από εκεί αμέσως και ανανεώνουμε σιωπηλά στο παρασκήνιο όταν υπάρχει ίντερνετ.
 // Όταν αλλάζει κάτι στο παιχνίδι, ανέβαζε το VERSION.
-const VERSION = 'kairos-v1';
+const VERSION = 'kairos-v2';
 const FILES = [
   './', 'index.html', 'kairos.css', 'game.js', 'sound.js', 'heroes.js', 'manifest.webmanifest',
   '../lib/three/three.module.min.js',
@@ -11,7 +11,8 @@ const FILES = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // cache: 'reload' = κατέβασε φρέσκα από το δίκτυο, όχι από την cache του browser
+  e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
