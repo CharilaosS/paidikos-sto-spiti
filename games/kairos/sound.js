@@ -108,26 +108,30 @@ export class Sound {
     seq.forEach((f, i) => this.tone(f, t + i * 0.09, 0.5, { vol: 0.12, type: kind === 'rain' ? 'triangle' : 'sine' }));
   }
 
-  // Φουντούκης: δύο απαλά «γαβ»
+  // Φουντούκης: δύο «γαβ». Το ηχείο του κινητού δεν βγάζει μπάσα (κάτω από ~400 Hz),
+  // οπότε το γάβγισμα ζει στα 500–1500 Hz: πριονωτό κύμα με «φωνήεν» από ζωνοπερατό φίλτρο.
   woof() {
     if (!this.ctx) return;
     const ctx = this.ctx, t = ctx.currentTime;
-    for (const s of [0, 0.22]) {
+    for (const s of [0, 0.26]) {
       const o = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain();
-      o.type = 'sawtooth'; o.frequency.setValueAtTime(420, t + s); o.frequency.exponentialRampToValueAtTime(190, t + s + 0.14);
-      f.type = 'lowpass'; f.frequency.value = 900; f.Q.value = 4;
-      g.gain.setValueAtTime(0.0001, t + s); g.gain.exponentialRampToValueAtTime(0.25, t + s + 0.015);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + s + 0.16);
-      o.connect(f).connect(g).connect(this.master); o.start(t + s); o.stop(t + s + 0.2);
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(420, t + s);
+      o.frequency.linearRampToValueAtTime(680, t + s + 0.04);
+      o.frequency.exponentialRampToValueAtTime(330, t + s + 0.18);
+      f.type = 'bandpass'; f.frequency.value = 1100; f.Q.value = 1.1;
+      g.gain.setValueAtTime(0.0001, t + s); g.gain.exponentialRampToValueAtTime(1.2, t + s + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + s + 0.2);
+      o.connect(f).connect(g).connect(this.master); o.start(t + s); o.stop(t + s + 0.25);
     }
   }
 
-  // Πέτρος: χαρούμενο «χοπ» που ανεβαίνει
+  // Πέτρος: «μπόινγκ» που ανεβαίνει και τρεις χαρούμενες νότες
   hop() {
     if (!this.ctx) return;
     const t = this.ctx.currentTime;
-    this.tone(330, t, 0.25, { vol: 0.18, to: 880, type: 'triangle' });
-    [988, 1175].forEach((f, i) => this.tone(f, t + 0.18 + i * 0.08, 0.2, { vol: 0.08 }));
+    this.tone(500, t, 0.3, { vol: 0.4, to: 1400, type: 'triangle' });
+    [1047, 1319, 1568].forEach((f, i) => this.tone(f, t + 0.2 + i * 0.07, 0.3, { vol: 0.2 }));
   }
 
   splash() {
